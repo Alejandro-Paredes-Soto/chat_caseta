@@ -1,0 +1,117 @@
+.mi-tabla {
+    width: 600px;
+    height: 400px;
+    margin-top: 20px;
+    margin-left: 20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
+    border-radius: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: white;
+    padding: 10px;
+    position: fixed;
+    bottom: 50px;
+    left: 150px;
+}
+
+
+.mi-tabla::-webkit-scrollbar {
+    width: 10px;
+    height: 15px;
+}
+
+
+.mi-tabla::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 20px;
+}
+
+.mi-tabla .header-colono {
+    background: #CF63F5;
+    width: 90%;
+    font-size: 25px;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 20px;
+    border-radius: 10px;
+    word-break: break-all;
+    margin-top: 10px;
+    margin: auto;
+}
+
+.mi-tabla .calle-colono {
+    width: 100%;
+    margin-top: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    border-radius: 20px;
+    margin-bottom: 10px;
+
+}
+
+.mi-tabla .calle-colono>div {
+    box-shadow: rgba(17, 17, 26, 0.1) 0px 0px 16px;
+    min-width: 150px;
+    height: 100px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    margin-top: 10px;
+    box-sizing: border-box;
+    padding: 10px;
+    cursor: pointer;
+
+}
+
+.row-casillas {
+    width: 100%;
+    height: 15px;
+    background: none;
+    position: fixed;
+    bottom: 30px;
+    left: 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    visibility: visible;
+}
+
+
+.row-casillas .cola {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 25px;
+    margin-bottom: -15px;
+    cursor: pointer;
+}
+
+.row-casillas .cola span {
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    box-sizing: border-box;
+    padding: 5px
+}
+
+.cola-colonos {
+    cursor: pointer !important;
+}
+
+.cola-colonos:hover {
+    background: white !important;
+    color: black !important;
+    transition: all 300ms ease-in-out !important;
+}
