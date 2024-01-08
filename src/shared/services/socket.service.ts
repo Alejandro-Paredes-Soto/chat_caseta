@@ -1,22 +1,23 @@
-import { type Socket, io} from 'socket.io-client4';
-import { ServerToHikvisionConsumerEvents } from '@/app-admin/interfaces/socketio.interfaces'
+import io from 'socket.io-client';
 
-    const socket: Socket<ServerToHikvisionConsumerEvents> = io('http://127.0.0.1:9000', {
-      reconnectionDelayMax: 2000,
-      reconnectionDelay: 500,
-      path: '/api/socketio/v2',
-      withCredentials: true,
+    const socket = io('http://127.0.0.1:9000', {
+      path: '/a/d/sio/',
       transports: ['websocket'],
-      autoConnect: true
-   
-   })
-
-   socket.on('connect_error', (err: Error) => {
-    console.log('Error de socket')
-    console.log(err)
-   })
+      autoConnect: true,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      reconnectionAttempts: Infinity,
+      query: {
+        token: 'AccesoTmpADV12311131'
+      }
+    })
+    socket.on('connect_error', (err) => {
+      console.log('err')
+      console.log(err)
+  })
   
-   socket.connect();
+
 
    export default socket;
 

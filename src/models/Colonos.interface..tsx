@@ -1,5 +1,5 @@
 export type ColonosI = {
-    Nombre?: string | undefined,
+    Calle?: string | undefined,
     Numero?: string | undefined,
     Id: number,
     minimizar?: boolean,

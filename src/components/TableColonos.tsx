@@ -1,70 +1,50 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './../assets/styles/tablecolonos.css'
 import Casilla from './Casilla';
 import { ColonosI } from '../models/Colonos.interface.';
-import { Tooltip } from 'antd';
-import { trpc } from './../shared/services/trpc';
-import socket from './../shared/services/socket.service';
+import { Button, Tooltip, Input } from 'antd';
+// import socket from './../shared/services/socket.service';
+import { invoke } from '@tauri-apps/api/tauri';
+import axios from 'axios'
+import { DeleteOutlined } from '@ant-design/icons';
 
 const TableColonos = ({ showTable }: { showTable: boolean }) => {
 
-    const { data } = trpc.caseta.chat.getColonos.useQuery();
     const [newDataColonos, setNewDataColonos] = useState<Array<[string, ColonosI[]]>>([])
     const [colonoSelected, setColonoSelected] = useState<ColonosI[]>([])
+    const [dataFilter, setDataFilter] = useState<Array<[string, ColonosI[]]>>([])
 
     useEffect(() => {
+        axios.get('http://localhost:10003/Data/ADV/CsE/87/Cht/colonos', {
+            headers: {
+                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJIjoxNCwiaWF0IjoxNzA0NDc3NzQyLCJleHAiOjE3MDU2ODczNDIsImF1ZCI6ImNDYXNFIn0.TC3gT7tfNzmtNh8p1qfoWwmKyqn9nkMjGgPNA-FOpSk'
+            }
+        }).then((d) => {
+            const { data } = d.data
 
-        if (data) {
-            const arrayColonos = data.reduce((acc, obj) => {
+            const arrayColonos = data.reduce((acc: Record<string, ColonosI[]>, obj: ColonosI) => {
+                if (obj.Calle) {
 
-                if (acc[obj.Nombre]) {
-                    acc[obj.Nombre].push(obj)
-                } else {
-                    acc[obj.Nombre] = [obj]
+                    if (acc[obj.Calle]) {
+                        acc[obj.Calle].push(obj)
+                    } else {
+                        acc[obj.Calle] = [obj]
+                    }
                 }
                 return acc
             }, {})
-            setNewDataColonos(Object.entries(arrayColonos))
-        }
 
-    }, [data])
+            setNewDataColonos(Object.entries(arrayColonos))
+            setDataFilter(Object.entries(arrayColonos))
+
+        }).catch(() => setNewDataColonos([]))
+    }, [])
 
     const onClickSelectedColono = (dataColono: ColonosI) => setColonoSelected((prevColonoSelected) => {
 
         let findColono = prevColonoSelected.find((colono) => colono.Id == dataColono.Id)
-
         return !findColono ? [dataColono, ...prevColonoSelected] : [...prevColonoSelected]
-
     })
-
-    useEffect(() => {
-
-        socket.on('onMessage', (onObjMessage) => {
-
-            setColonoSelected((prevColonoSelected) => {
-
-                let findColonoExist = prevColonoSelected.find((colono) => colono.Id == Number(onObjMessage.idRoom.split('-')[3]))
-
-                return !findColonoExist ? [{
-                    Id: Number(onObjMessage.idRoom.split('-')[3]),
-                    Nombre: onObjMessage.nombreCalle,
-                    Numero: onObjMessage.numeroExt,
-                    displayBoxListMessages: 'block',
-                    displayTextArea: 'block',
-                    heightCard: '325px',
-                    minimizar: false
-                }, ...prevColonoSelected] :
-
-                    [...prevColonoSelected]
-            })
-        })
-
-
-        return () => {
-            socket.off('onMessage')
-        }
-    }, [])
-
 
     const onClickRemoveColono = (idColono: number): void => {
         let filter = colonoSelected.filter((colono) => colono.Id != idColono)
@@ -86,10 +66,38 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
         }
     }
 
+    const onFilterData = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        if (event.currentTarget.value != '') {
+
+            let search = dataFilter.filter((d) =>
+                d[0].replace(/\s+/g, '').toLowerCase().includes(event.currentTarget.value.replace(/\s+/g, '').toLowerCase()) ||
+                d[1].some((d1) => d1.Numero?.replace(/\s+/g, '').toLowerCase().includes(event.currentTarget.value.replace(/\s+/g, '').toLowerCase()))
+            );
+            setNewDataColonos(search)
+
+        } else if (event.currentTarget.value == '') {
+
+            setNewDataColonos(dataFilter)
+        }
+
+    }
+
     return (
         <>
-            <div style={{ display: showTable ? 'block' : 'none' }}>
+
+            <div
+                style={{ display: showTable ? 'block' : 'none' }}
+            >
+
                 <div className="mi-tabla">
+
+                    <Input
+                        placeholder='Buscar...'
+                        style={{ position: 'fixed', marginTop: '-55px', width: '600px' }}
+                        onChange={onFilterData}
+                    />
+
                     {
                         newDataColonos.length > 0 ?
                             (
@@ -107,9 +115,6 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
                                                 (colono[1] && colono[1].length > 0) ?
                                                     (
                                                         colono[1].map((calle) => {
-                                                            //Iniciando salas con todos los colonos
-                                                            socket.emit('sendRoom', { idRoom: `CASETA-1-COLONO-${calle.Id}` })
-
                                                             return <div
                                                                 key={calle.Id}
                                                                 onClick={() => onClickSelectedColono(calle)}
@@ -128,6 +133,7 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
                 </div>
             </div>
 
+
             <div className='row-casillas'>
 
                 {
@@ -140,12 +146,31 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
                                             colonoSelected.slice(3, colonoSelected.length).map((colono) => {
 
 
-                                                return <span
-                                                    onClick={() => onClickPositionColonos(colono)}
-                                                    className='cola-colonos'
-                                                    key={colono.Id}>
-                                                    {colono.Nombre} #{colono.Numero}
-                                                </span>
+                                                return <div style={
+                                                    {
+                                                        display: 'flex',
+                                                        justifyContent: 'space-between',
+                                                        marginTop: '10px',
+                                                        alignItems: 'center'
+                                                    }}>
+
+                                                    <span
+                                                        onClick={() => onClickPositionColonos(colono)}
+                                                        className='cola-colonos'
+                                                        key={colono.Id}>
+                                                        {colono.Calle} #{colono.Numero}
+                                                    </span>
+
+                                                    <Button
+                                                        style={{ marginLeft: '5px' }}
+                                                        onClick={() => onClickRemoveColono(colono.Id)}
+                                                        type='primary'
+                                                        danger
+                                                        size='small'>
+                                                        <DeleteOutlined />
+                                                    </Button>
+                                                </div>
+
                                             })
                                         }
                                     </div>}
@@ -166,6 +191,14 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
 
                 />
             </div>
+            {/* 
+            <Notification
+                show={infoNoti && infoNoti.idParticipant != 1 ? true : false}
+                nameColono={infoNoti && infoNoti.idParticipant != 1 && infoNoti.nombreCalle && infoNoti.numeroExt ? `${infoNoti.nombreCalle} #${infoNoti.numeroExt}` : ''}
+                msgColono={infoNoti && infoNoti.messageColono ? infoNoti.messageColono : ''} />
+
+            
+*/}
         </>
     );
 }

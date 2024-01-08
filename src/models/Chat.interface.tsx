@@ -1,7 +1,5 @@
 export type Chat = {
-    idRoom: string;
-    idParticipant: number;
-    messageCaseta?: string;
-    messageColono?: string;
-    dateCreation: Date;
+    M: string;
+    N: string;
+    I: number;
 }
