@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ColonosI } from '../models/Colonos.interface.';
 import { Chat } from '../models/Chat.interface';
 import './../assets/styles/casilla.css'
@@ -176,7 +176,7 @@ const Casilla = (
 
                                     <textarea
                                         onKeyUp={(event) => sendMessageCaseta(event.currentTarget.value, event.key, colono)}
-                                        style={{ resize: 'none', height: '30px', width: '98%', outline: 'none', display: colono.displayTextArea }}
+                                        style={{ resize: 'none', height: '30px', width: '100%', outline: 'none', display: colono.displayTextArea }}
                                         cols={30}
                                         rows={10}>
                                     </textarea>

@@ -13,8 +13,8 @@ import io from 'socket.io-client';
       }
     })
     socket.on('connect_error', (err) => {
-      console.log('err')
-      console.log(err)
+      // console.log('err')
+      // console.log(err)
   })
   
 

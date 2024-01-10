@@ -21,12 +21,6 @@ const useNotification = ({ type, message, description, duration }:
     
     }
 
-     // useEffect(() => {
-    //     msgColono && nameColono &&
-    //         openNotification(nameColono, msgColono)
-
-    // }, [msgColono])
-
     return {
         openNotification,
         contextHolder

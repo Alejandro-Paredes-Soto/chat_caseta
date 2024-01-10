@@ -1,0 +1,66 @@
+.login {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login .card {
+    width: 500px;
+    height: 550px;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+.login .card .list-usuarios {
+    width: 450px;
+    height: 70%;
+    margin-top: 10px;
+
+}
+
+.login .card .list-usuarios ul {
+    list-style: none;
+    width: 450px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.login .card .list-usuarios ul li {
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 18px;
+    color: #C52EE7;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px;
+    margin-top: 10px;
+    cursor: pointer;
+    position: relative;
+}
+
+.login .card .list-usuarios ul li .check {
+    position: absolute;
+    right: 30px;
+    top: 15px;
+}
+
+.list-usuarios .password {
+    margin-top: 40px;
+}
+
+.btnLogin {
+    margin: auto !important;
+    background: #C52EE7 !important;
+    color: white !important;
+    font-weight: bold !important;
+    display: block;
+    margin-top: 10px !important;
+}

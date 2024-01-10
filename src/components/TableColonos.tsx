@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import './../assets/styles/tablecolonos.css'
 import Casilla from './Casilla';
 import { ColonosI } from '../models/Colonos.interface.';
 import { Button, Tooltip, Input } from 'antd';
 // import socket from './../shared/services/socket.service';
-import { invoke } from '@tauri-apps/api/tauri';
-import axios from 'axios'
+// import { invoke } from '@tauri-apps/api/tauri';
+import { methodGet } from './../shared/services/axios.service';
 import { DeleteOutlined } from '@ant-design/icons';
+import { TokenContext } from './../utils/context';
+
 
 const TableColonos = ({ showTable }: { showTable: boolean }) => {
 
@@ -14,31 +16,38 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
     const [colonoSelected, setColonoSelected] = useState<ColonosI[]>([])
     const [dataFilter, setDataFilter] = useState<Array<[string, ColonosI[]]>>([])
 
+    const { servidor, token } = useContext(TokenContext)
+
     useEffect(() => {
-        axios.get('http://localhost:10003/Data/ADV/CsE/87/Cht/colonos', {
-            headers: {
-                token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJIjoxNCwiaWF0IjoxNzA0NDc3NzQyLCJleHAiOjE3MDU2ODczNDIsImF1ZCI6ImNDYXNFIn0.TC3gT7tfNzmtNh8p1qfoWwmKyqn9nkMjGgPNA-FOpSk'
-            }
-        }).then((d) => {
-            const { data } = d.data
 
-            const arrayColonos = data.reduce((acc: Record<string, ColonosI[]>, obj: ColonosI) => {
-                if (obj.Calle) {
+        methodGet(servidor, 'Cht/colonos', token).then((res) => {
+            const { data, status } = res
 
-                    if (acc[obj.Calle]) {
-                        acc[obj.Calle].push(obj)
-                    } else {
-                        acc[obj.Calle] = [obj]
+            if (status == 200) {
+
+                const arrayColonos = data.data.reduce((acc: Record<string, ColonosI[]>, obj: ColonosI) => {
+
+                    if (obj.Calle) {
+
+                        if (acc[obj.Calle]) {
+                            acc[obj.Calle].push(obj)
+                        } else {
+                            acc[obj.Calle] = [obj]
+                        }
                     }
-                }
-                return acc
-            }, {})
+                    return acc
+                }, {})
 
-            setNewDataColonos(Object.entries(arrayColonos))
-            setDataFilter(Object.entries(arrayColonos))
+                setNewDataColonos(Object.entries(arrayColonos))
+                setDataFilter(Object.entries(arrayColonos))
+            }
+        }).catch((reason: any) => {
+            setNewDataColonos([])
+            console.log('reason')
+            console.log(reason)
+        })
 
-        }).catch(() => setNewDataColonos([]))
-    }, [])
+    }, [servidor])
 
     const onClickSelectedColono = (dataColono: ColonosI) => setColonoSelected((prevColonoSelected) => {
 
@@ -191,14 +200,7 @@ const TableColonos = ({ showTable }: { showTable: boolean }) => {
 
                 />
             </div>
-            {/* 
-            <Notification
-                show={infoNoti && infoNoti.idParticipant != 1 ? true : false}
-                nameColono={infoNoti && infoNoti.idParticipant != 1 && infoNoti.nombreCalle && infoNoti.numeroExt ? `${infoNoti.nombreCalle} #${infoNoti.numeroExt}` : ''}
-                msgColono={infoNoti && infoNoti.messageColono ? infoNoti.messageColono : ''} />
 
-            
-*/}
         </>
     );
 }
