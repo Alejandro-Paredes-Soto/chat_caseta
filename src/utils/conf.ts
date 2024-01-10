@@ -6,8 +6,8 @@ export const readAndWriteFileConf = async (servidor?: string, token?: string ) :
 
     const json = JSON.parse(result)
 
-    json['servidor'] = servidor ? servidor : '',
-    json['token'] = token ? token : ''
+    json['servidor'] = servidor || ''
+    json['token'] = token  || ''
 
     await writeFile('conf.json', JSON.stringify(json), { dir: BaseDirectory.Resource })
 

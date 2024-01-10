@@ -43,7 +43,7 @@ const Login = () => {
         try {
 
             const respLgniC = await methodPost(servidor, 'LgniC', '', { L: TOKEN1 })
-            const { status, data } = await respLgniC
+            const { status, data } = respLgniC
 
             if (status == 200) {
                 setToken(data.T)
